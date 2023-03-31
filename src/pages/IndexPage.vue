@@ -13,7 +13,7 @@
         <PostList :post-list="postList" />
       </a-tab-pane>
       <a-tab-pane key="picture" tab="图片">
-        <PictureList :picture-list="pictureList" />
+        <PictureList />
       </a-tab-pane>
       <a-tab-pane key="user" tab="用户">
         <UserList :user-list="userList" />
@@ -29,6 +29,17 @@ import PictureList from "@/components/PictureList.vue";
 import UserList from "@/components/UserList.vue";
 import MyDivider from "@/components/MyDivider.vue";
 import { useRoute, useRouter } from "vue-router";
+import fusoAxios from "@/plugins/myAxios";
+
+const postList = ref([]);
+fusoAxios.post("/post/list/page/vo", {}).then((res: any) => {
+  postList.value = res.records;
+});
+
+const userList = ref([]);
+fusoAxios.post("/user/list/page/vo", {}).then((res: any) => {
+  userList.value = res.records;
+});
 
 const router = useRouter();
 const route = useRoute();
