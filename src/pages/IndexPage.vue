@@ -1,7 +1,7 @@
 <template>
   <div class="index-page">
     <a-input-search
-      v-model:value="searchParams.text"
+      v-model:value="searchText"
       placeholder="input search text"
       enter-button="Search"
       size="large"
@@ -46,6 +46,8 @@ const initSearchParams = {
   pageSize: 10,
   pageNum: 1,
 };
+
+const searchText = ref(route.query.text || "");
 
 /**
  * 加载数据(优化掉了哦)
@@ -133,9 +135,12 @@ watchEffect(() => {
 
 const onSearch = (value: string) => {
   console.log(value);
-  // 搜索的内容填充到url上,当用户刷新页面时,能够从url还原之前的搜索状态
+  // 点击搜索按钮的时候去改路由
   router.push({
-    query: searchParams.value,
+    query: {
+      ...searchParams.value,
+      text: value,
+    },
   });
   loadData(searchParams.value);
 };
