@@ -1,9 +1,13 @@
 <template>
   用户列表
-  <a-list item-layout="horizontal" :data-source="props.userList">
+  <a-list
+    item-layout="horizontal"
+    :grid="{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 3 }"
+    :data-source="props.userList"
+  >
     <template #renderItem="{ item }">
       <a-list-item>
-        <a-card hoverable style="width: 240px">
+        <a-card hoverable>
           <template #cover>
             <img alt="example" :src="gege" />
           </template>
@@ -29,8 +33,4 @@ const props = withDefaults(defineProps<Props>(), {
 });
 </script>
 
-<style scoped>
-.gege {
-  width: 200px;
-}
-</style>
+<style scoped></style>

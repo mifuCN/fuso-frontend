@@ -13,7 +13,7 @@
         <PostList :post-list="postList" />
       </a-tab-pane>
       <a-tab-pane key="picture" tab="图片">
-        <PictureList />
+        <PictureList :picture-list="pictureList" />
       </a-tab-pane>
       <a-tab-pane key="user" tab="用户">
         <UserList :user-list="userList" />
@@ -32,14 +32,8 @@ import { useRoute, useRouter } from "vue-router";
 import fusoAxios from "@/plugins/myAxios";
 
 const postList = ref([]);
-fusoAxios.post("/post/list/page/vo", {}).then((res: any) => {
-  postList.value = res.records;
-});
-
 const userList = ref([]);
-fusoAxios.post("/user/list/page/vo", {}).then((res: any) => {
-  userList.value = res.records;
-});
+const pictureList = ref([]);
 
 const router = useRouter();
 const route = useRoute();
@@ -50,7 +44,39 @@ const initSearchParams = {
   pageSize: 10,
   pageNum: 1,
 };
+
+/**
+ * 加载数据
+ * @param params
+ */
+const loadData = (params: any) => {
+  // 后端要的是searchText,前端传来的是text,这里再封装一下前端的请求参数
+  const postQuery = {
+    ...params,
+    searchText: params.text,
+  };
+  fusoAxios.post("/post/list/page/vo", postQuery).then((res: any) => {
+    postList.value = res.records;
+  });
+  const userQuery = {
+    ...params,
+    userName: params.text,
+  };
+  fusoAxios.post("/user/list/page/vo", userQuery).then((res: any) => {
+    userList.value = res.records;
+  });
+  const pictureQuery = {
+    ...params,
+    searchText: params.text,
+  };
+  fusoAxios.post("/picture/list/page/vo", pictureQuery).then((res: any) => {
+    pictureList.value = res.records;
+  });
+};
+
 const searchParams = ref(initSearchParams);
+// 首次请求
+loadData(initSearchParams);
 
 watchEffect(() => {
   searchParams.value = {
@@ -60,11 +86,12 @@ watchEffect(() => {
 });
 
 const onSearch = (value: string) => {
-  alert(value);
+  console.log(value);
   // 搜索的内容填充到url上,当用户刷新页面时,能够从url还原之前的搜索状态
   router.push({
     query: searchParams.value,
   });
+  loadData(searchParams.value);
 };
 // 点击tabs栏时,搜索的内容和tabs对应的url共同填充到url上,当用户刷新页面时,能够从url还原之前的搜索状态
 const onTabChange = (key: string) => {
