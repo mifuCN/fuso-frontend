@@ -46,10 +46,10 @@ const initSearchParams = {
 };
 
 /**
- * 加载数据
+ * 加载数据(优化掉了哦)
  * @param params
  */
-const loadData = (params: any) => {
+const loadDataOld = (params: any) => {
   // 后端要的是searchText,前端传来的是text,这里再封装一下前端的请求参数
   const postQuery = {
     ...params,
@@ -71,6 +71,22 @@ const loadData = (params: any) => {
   };
   fusoAxios.post("/picture/list/page/vo", pictureQuery).then((res: any) => {
     pictureList.value = res.records;
+  });
+};
+
+/**
+ * 加载数据(新)
+ * @param params
+ */
+const loadData = (params: any) => {
+  const query = {
+    ...params,
+    searchText: params.text,
+  };
+  fusoAxios.post("/search/all", query).then((res: any) => {
+    postList.value = res.postList;
+    userList.value = res.userList;
+    pictureList.value = res.pictureList;
   });
 };
 
